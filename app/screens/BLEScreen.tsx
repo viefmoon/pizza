@@ -1,12 +1,13 @@
 import { FC, useEffect } from "react"
-import { ViewStyle, TextStyle } from "react-native"
+import { ViewStyle, Alert, TextStyle } from "react-native"
 import { Screen, Text, Button } from "@/components"
 import { useBLE } from "@/hooks"
 import { AppStackScreenProps } from "@/navigators"
+import { Device } from "react-native-ble-plx"
 
 interface BLEScreenProps extends AppStackScreenProps<"BLE"> {}
 
-export const BLEScreen: FC<BLEScreenProps> = () => {
+export const BLEScreen: FC<BLEScreenProps> = ({ navigation }) => {
   const {
     isScanning,
     devices,
@@ -16,13 +17,26 @@ export const BLEScreen: FC<BLEScreenProps> = () => {
     bluetoothState,
     permissionsGranted,
     requestPermissions,
+    connectToDevice,
+    disconnectDevice,
+    connectedDevice,
+    isConnecting,
   } = useBLE()
 
   useEffect(() => {
     if (isReady) {
       requestPermissions()
     }
-  }, [isReady])
+  }, [isReady, requestPermissions])
+
+  const handleDevicePress = async (device: Device) => {
+    try {
+      await connectToDevice(device)
+      navigation.navigate("BLEConfig", { device })
+    } catch (error: any) {
+      Alert.alert("Error de conexión", error.message || "No se pudo conectar al dispositivo")
+    }
+  }
 
   if (!isReady) {
     return (
@@ -58,20 +72,32 @@ export const BLEScreen: FC<BLEScreenProps> = () => {
     <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top", "bottom"]}>
       <Text preset="heading" text="Configuración BLE" style={$title} />
 
+      {connectedDevice && (
+        <>
+          <Text text={`Conectado a: ${connectedDevice.name || "Dispositivo"}`} style={$message} />
+          <Button
+            text="Desconectar"
+            onPress={disconnectDevice}
+            style={$disconnectButton}
+            disabled={isConnecting}
+          />
+        </>
+      )}
+
       <Button
         text={isScanning ? "Detener escaneo" : "Escanear dispositivos"}
         onPress={isScanning ? stopScan : startScan}
         style={$scanButton}
+        disabled={isConnecting || !!connectedDevice}
       />
 
       {devices.map((device) => (
         <Button
           key={device.id}
           text={`${device.name || "Sin nombre"} (${device.id})`}
-          onPress={() => {
-            /* Implementar conexión */
-          }}
+          onPress={() => handleDevicePress(device)}
           style={$deviceButton}
+          disabled={isConnecting || !!connectedDevice}
         />
       ))}
     </Screen>
@@ -98,4 +124,9 @@ const $scanButton: ViewStyle = {
 
 const $deviceButton: ViewStyle = {
   marginBottom: 8,
+}
+
+const $disconnectButton: ViewStyle = {
+  marginBottom: 16,
+  backgroundColor: "#ff4444",
 }

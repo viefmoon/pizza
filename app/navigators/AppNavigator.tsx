@@ -11,7 +11,8 @@ import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { useAppTheme, useThemeProvider } from "@/utils/useAppTheme"
 import { ComponentProps } from "react"
-import { BLEScreen } from "@/screens"
+import { BLEScreen, BLEConfigScreen } from "@/screens"
+import { Device } from "react-native-ble-plx"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -31,6 +32,7 @@ export type AppStackParamList = {
   Welcome: undefined
   Dashboard: undefined
   BLE: undefined
+  BLEConfig: { device: Device }
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -68,6 +70,7 @@ const AppStack = () => {
       <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
       <Stack.Screen name="Dashboard" component={Screens.DashboardScreen} />
       <Stack.Screen name="BLE" component={BLEScreen} />
+      <Stack.Screen name="BLEConfig" component={BLEConfigScreen} />
       {/** 🔥 Your screens go here */}
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
