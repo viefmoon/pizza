@@ -12,6 +12,7 @@ import {
 import { spacing } from "@/theme"
 import { Theme } from "@/theme"
 import { useAppTheme } from "@/utils/useAppTheme"
+import { useSnackbar } from "@/context/SnackbarContext"
 
 const NAMESPACE = "system"
 
@@ -21,6 +22,7 @@ interface SystemConfigFormProps {
 
 export const SystemConfigForm: FC<SystemConfigFormProps> = ({ device }) => {
   const { theme } = useAppTheme()
+  const { showMessage } = useSnackbar()
   const [initialized, setInitialized] = useState(false)
   const [sleepTime, setSleepTime] = useState("")
   const [deviceId, setDeviceId] = useState("")
@@ -61,8 +63,10 @@ export const SystemConfigForm: FC<SystemConfigFormProps> = ({ device }) => {
         },
       }
       await writeConfigCharacteristic(device, BLE_SERVICE_UUID, BLE_CHARACTERISTICS.SYSTEM, config)
+      showMessage("Configuración guardada exitosamente.", "success")
     } catch (error) {
       console.error("Error guardando configuración:", error)
+      showMessage("Error al guardar la configuración.", "error")
     } finally {
       setIsSubmitting(false)
     }
@@ -77,7 +81,7 @@ export const SystemConfigForm: FC<SystemConfigFormProps> = ({ device }) => {
     >
       <View style={$fieldContainer}>
         <Text text="Inicializado" />
-        <Switch value={initialized} onValueChange={setInitialized} />
+        <Switch value={initialized} onValueChange={setInitialized} disabled />
       </View>
 
       <TextField

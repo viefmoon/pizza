@@ -31,6 +31,7 @@ import { customFontsToLoad } from "./theme"
 import Config from "./config"
 import { KeyboardProvider } from "react-native-keyboard-controller"
 import { loadDateFnsLocale } from "./utils/formatDate"
+import { SnackbarProvider } from "./context/SnackbarContext"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
@@ -102,11 +103,13 @@ export function App() {
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <ErrorBoundary catchErrors={Config.catchErrors}>
         <KeyboardProvider>
-          <AppNavigator
-            linking={linking}
-            initialState={initialNavigationState}
-            onStateChange={onNavigationStateChange}
-          />
+          <SnackbarProvider>
+            <AppNavigator
+              linking={linking}
+              initialState={initialNavigationState}
+              onStateChange={onNavigationStateChange}
+            />
+          </SnackbarProvider>
         </KeyboardProvider>
       </ErrorBoundary>
     </SafeAreaProvider>

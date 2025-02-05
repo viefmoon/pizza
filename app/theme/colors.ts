@@ -39,7 +39,7 @@ const palette = {
   green300: "#A8DAB5",
   green400: "#81C995",
   green500: "#5BB974",
-
+  green600: "#34A853",
   blue100: "#DBEAFE",
   blue200: "#BFDBFE",
   blue300: "#93C5FD",
@@ -101,4 +101,6 @@ export const colors = {
    * Error Background.
    */
   errorBackground: palette.angry100,
+  success: palette.green500,
+  successBackground: palette.green100,
 } as const
