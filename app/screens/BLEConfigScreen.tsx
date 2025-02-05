@@ -13,6 +13,7 @@ import { LoRaConfigForm } from "@/screens/ble-config/LoRaConfigForm"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/utils/useAppTheme"
 import { Theme } from "@/theme"
+import { TouchableOpacity } from "react-native"
 
 interface BLEConfigScreenProps extends AppStackScreenProps<"BLEConfig"> {}
 
@@ -20,6 +21,8 @@ export const BLEConfigScreen: FC<BLEConfigScreenProps> = ({ route, navigation })
   const device = route.params?.device as Device
   const [isDisconnecting, setIsDisconnecting] = useState(false)
   const { theme } = useAppTheme()
+
+  const [expandedForm, setExpandedForm] = useState<string | null>(null)
 
   useEffect(() => {
     if (!device) {
@@ -63,6 +66,10 @@ export const BLEConfigScreen: FC<BLEConfigScreenProps> = ({ route, navigation })
     }
   }
 
+  const toggleForm = (formName: string) => {
+    setExpandedForm((prevForm) => (prevForm === formName ? null : formName))
+  }
+
   if (!device) return null
 
   return (
@@ -77,13 +84,40 @@ export const BLEConfigScreen: FC<BLEConfigScreenProps> = ({ route, navigation })
       />
 
       <ScrollView style={$scrollView}>
-        <SystemConfigForm device={device} />
-        <NTC100KConfigForm device={device} />
-        <NTC10KConfigForm device={device} />
-        <ConductivityConfigForm device={device} />
-        <PHConfigForm device={device} />
-        <SensorsConfigForm device={device} />
-        <LoRaConfigForm device={device} />
+        <TouchableOpacity onPress={() => toggleForm("system")} style={$formHeader(theme)}>
+          <Text text="System Config" style={$formHeaderText(theme)} />
+        </TouchableOpacity>
+        {expandedForm === "system" && <SystemConfigForm device={device} />}
+
+        <TouchableOpacity onPress={() => toggleForm("ntc100k")} style={$formHeader(theme)}>
+          <Text text="NTC100K Config" style={$formHeaderText(theme)} />
+        </TouchableOpacity>
+        {expandedForm === "ntc100k" && <NTC100KConfigForm device={device} />}
+
+        <TouchableOpacity onPress={() => toggleForm("ntc10k")} style={$formHeader(theme)}>
+          <Text text="NTC10K Config" style={$formHeaderText(theme)} />
+        </TouchableOpacity>
+        {expandedForm === "ntc10k" && <NTC10KConfigForm device={device} />}
+
+        <TouchableOpacity onPress={() => toggleForm("conductivity")} style={$formHeader(theme)}>
+          <Text text="Conductivity Config" style={$formHeaderText(theme)} />
+        </TouchableOpacity>
+        {expandedForm === "conductivity" && <ConductivityConfigForm device={device} />}
+
+        <TouchableOpacity onPress={() => toggleForm("ph")} style={$formHeader(theme)}>
+          <Text text="PH Config" style={$formHeaderText(theme)} />
+        </TouchableOpacity>
+        {expandedForm === "ph" && <PHConfigForm device={device} />}
+
+        <TouchableOpacity onPress={() => toggleForm("sensors")} style={$formHeader(theme)}>
+          <Text text="Sensors Config" style={$formHeaderText(theme)} />
+        </TouchableOpacity>
+        {expandedForm === "sensors" && <SensorsConfigForm device={device} />}
+
+        <TouchableOpacity onPress={() => toggleForm("lora")} style={$formHeader(theme)}>
+          <Text text="LoRa Config" style={$formHeaderText(theme)} />
+        </TouchableOpacity>
+        {expandedForm === "lora" && <LoRaConfigForm device={device} />}
       </ScrollView>
     </Screen>
   )
@@ -105,5 +139,18 @@ const $scrollView: ViewStyle = {
 const $deviceName = (theme: Theme): TextStyle => ({
   marginBottom: spacing.sm,
   textAlign: "center",
+  color: theme.colors.text,
+})
+
+const $formHeader = (theme: Theme): ViewStyle => ({
+  padding: spacing.md,
+  backgroundColor: theme.colors.background,
+  borderBottomWidth: 1,
+  borderBottomColor: "#ccc",
+  marginBottom: spacing.xxxs,
+})
+
+const $formHeaderText = (theme: Theme): TextStyle => ({
+  fontWeight: "bold",
   color: theme.colors.text,
 })
