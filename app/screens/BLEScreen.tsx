@@ -4,6 +4,14 @@ import { Screen, Text, Button } from "@/components"
 import { useBLE } from "@/hooks"
 import { AppStackScreenProps } from "@/navigators"
 import { Device } from "react-native-ble-plx"
+import Animated, {
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  withSequence,
+  useSharedValue,
+  cancelAnimation,
+} from "react-native-reanimated"
 
 interface BLEScreenProps extends AppStackScreenProps<"BLE"> {}
 
@@ -22,6 +30,25 @@ export const BLEScreen: FC<BLEScreenProps> = ({ navigation }) => {
     connectedDevice,
     isConnecting,
   } = useBLE()
+
+  // Nueva animación para el botón de escaneo (efecto pulsante)
+  const buttonScale = useSharedValue(1)
+
+  useEffect(() => {
+    if (isScanning) {
+      buttonScale.value = withRepeat(
+        withSequence(withTiming(1.05, { duration: 1000 }), withTiming(1, { duration: 1000 })),
+        -1,
+      )
+    } else {
+      cancelAnimation(buttonScale)
+      buttonScale.value = 1
+    }
+  }, [isScanning, buttonScale])
+
+  const animatedButtonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: buttonScale.value }],
+  }))
 
   useEffect(() => {
     if (isReady) {
@@ -84,12 +111,15 @@ export const BLEScreen: FC<BLEScreenProps> = ({ navigation }) => {
         </>
       )}
 
-      <Button
-        text={isScanning ? "Detener escaneo" : "Escanear dispositivos"}
-        onPress={isScanning ? stopScan : startScan}
-        style={$scanButton}
-        disabled={isConnecting || !!connectedDevice}
-      />
+      {/* Botón de escaneo con animación pulsante si está activo */}
+      <Animated.View style={animatedButtonStyle}>
+        <Button
+          text={isScanning ? "Detener escaneo" : "Escanear dispositivos"}
+          onPress={isScanning ? stopScan : startScan}
+          style={$scanButton}
+          disabled={isConnecting || !!connectedDevice}
+        />
+      </Animated.View>
 
       {devices.map((device) => (
         <Button
@@ -130,3 +160,5 @@ const $disconnectButton: ViewStyle = {
   marginBottom: 16,
   backgroundColor: "#ff4444",
 }
+
+export default BLEScreen
