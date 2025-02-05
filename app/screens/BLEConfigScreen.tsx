@@ -27,6 +27,20 @@ export const BLEConfigScreen: FC<BLEConfigScreenProps> = ({ route, navigation })
       return
     }
 
+    const connectDevice = async () => {
+      try {
+        const isConnected = await device.isConnected()
+        if (!isConnected) {
+          await device.connect()
+        }
+      } catch (error) {
+        console.error("Error conectando al dispositivo:", error)
+        navigation.goBack()
+      }
+    }
+
+    connectDevice()
+
     return () => {
       if (device) {
         device

@@ -27,7 +27,6 @@ export const BLEScreen: FC<BLEScreenProps> = ({ navigation }) => {
     bluetoothState,
     permissionsGranted,
     requestPermissions,
-    connectToDevice,
     isConnecting,
   } = useBLE()
 
@@ -60,7 +59,11 @@ export const BLEScreen: FC<BLEScreenProps> = ({ navigation }) => {
 
   const handleDevicePress = async (device: Device) => {
     try {
-      await connectToDevice(device)
+      const isConnected = await device.isConnected()
+      if (!isConnected) {
+        await device.connect()
+      }
+      await device.discoverAllServicesAndCharacteristics()
       navigation.navigate("BLEConfig", { device })
     } catch (error: any) {
       Alert.alert("Error de conexión", error.message || "No se pudo conectar al dispositivo")

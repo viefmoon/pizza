@@ -1,7 +1,8 @@
 import { FC } from "react"
 import { View, ViewStyle, TextStyle } from "react-native"
 import { Text, Button } from "@/components"
-import { colors, spacing } from "@/theme"
+import { spacing, Theme } from "@/theme"
+import { useAppTheme } from "@/utils/useAppTheme"
 
 export interface ConfigFormProps {
   title: string
@@ -18,36 +19,39 @@ export const ConfigForm: FC<ConfigFormProps> = ({
   isSubmitting,
   style,
 }) => {
+  const { theme } = useAppTheme()
+
   return (
-    <View style={[style, $container]}>
-      <Text preset="heading" text={title} style={$title} />
+    <View style={[style, $container(theme)]}>
+      <Text preset="heading" text={title} style={$title(theme)} />
       <View style={$content}>{children}</View>
       <Button
         text={isSubmitting ? "Enviando..." : "Guardar configuración"}
         onPress={onSubmit}
         disabled={isSubmitting}
-        style={$submitButton}
+        style={$submitButton(theme)}
       />
     </View>
   )
 }
 
-const $container: ViewStyle = {
+const $container = (theme: Theme): ViewStyle => ({
   marginBottom: spacing.lg,
   padding: spacing.md,
-  backgroundColor: colors.palette.neutral200,
+  backgroundColor: theme.colors.background,
   borderRadius: 8,
-}
+})
 
-const $title: TextStyle = {
+const $title = (theme: Theme): TextStyle => ({
   fontSize: 18,
   marginBottom: spacing.sm,
-}
+  color: theme.colors.text,
+})
 
 const $content: ViewStyle = {
   marginBottom: spacing.md,
 }
 
-const $submitButton: ViewStyle = {
-  backgroundColor: colors.palette.secondary500,
-}
+const $submitButton = (theme: Theme): ViewStyle => ({
+  backgroundColor: theme.colors.tint,
+})

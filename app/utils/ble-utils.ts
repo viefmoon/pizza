@@ -1,8 +1,5 @@
 import { Device } from "react-native-ble-plx"
-import { decode as atob, encode as btoa } from "base-64"
-
-// Cache para discovery
-const discoveredDevices = new Set<string>()
+import { encode as btoa, decode as atob } from "base-64"
 
 // Constantes de servicios y características BLE
 export const BLE_SERVICE_UUID = "180A"
@@ -21,23 +18,36 @@ export function decodeBase64(value?: string | null): string {
   return value ? atob(value) : ""
 }
 
+// Función para codificar a base64
+export function encodeBase64(value: string): string {
+  return btoa(value)
+}
+
 // Función para leer configuración de una característica BLE
 export async function readConfigCharacteristic(
   device: Device,
   serviceUUID: string,
-  charUUID: string,
-): Promise<any> {
+  characteristicUUID: string,
+) {
   try {
-    if (!discoveredDevices.has(device.id)) {
-      await device.discoverAllServicesAndCharacteristics()
-      discoveredDevices.add(device.id)
+    const isConnected = await device.isConnected()
+    if (!isConnected) {
+      await device.connect()
     }
+    await device.discoverAllServicesAndCharacteristics()
 
-    const characteristic = await device.readCharacteristicForService(serviceUUID, charUUID)
-    const decoded = decodeBase64(characteristic.value)
-    return JSON.parse(decoded)
-  } catch (error: any) {
-    console.error(`Error leyendo la característica ${charUUID}:`, error)
+    const characteristic = await device.readCharacteristicForService(
+      serviceUUID,
+      characteristicUUID,
+    )
+
+    if (characteristic?.value) {
+      const decodedValue = atob(characteristic.value)
+      return JSON.parse(decodedValue)
+    }
+    return null
+  } catch (error) {
+    console.error(`Error leyendo la característica ${characteristicUUID}:`, error)
     throw error
   }
 }
@@ -46,15 +56,24 @@ export async function readConfigCharacteristic(
 export async function writeConfigCharacteristic(
   device: Device,
   serviceUUID: string,
-  charUUID: string,
-  config: any,
-): Promise<void> {
+  characteristicUUID: string,
+  value: any,
+) {
   try {
-    const jsonConfig = JSON.stringify(config)
-    const base64Config = btoa(jsonConfig)
-    await device.writeCharacteristicWithResponseForService(serviceUUID, charUUID, base64Config)
-  } catch (error: any) {
-    console.error(`Error escribiendo la característica ${charUUID}:`, error)
+    const isConnected = await device.isConnected()
+    if (!isConnected) {
+      await device.connect()
+    }
+    await device.discoverAllServicesAndCharacteristics()
+
+    const encodedValue = btoa(JSON.stringify(value))
+    await device.writeCharacteristicWithResponseForService(
+      serviceUUID,
+      characteristicUUID,
+      encodedValue,
+    )
+  } catch (error) {
+    console.error(`Error escribiendo la característica ${characteristicUUID}:`, error)
     throw error
   }
 }

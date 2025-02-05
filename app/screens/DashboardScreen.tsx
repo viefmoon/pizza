@@ -29,7 +29,7 @@ export const DashboardScreen: FC<DashboardScreenProps> = (_props) => {
   const menuItems: Array<{ icon: IconTypes; label: string; onPress: () => void }> = [
     {
       icon: "settings",
-      label: "Configuración BLE",
+      label: "Configuración de dispositivos",
       onPress: () => navigation.navigate("BLE"),
     },
   ]
@@ -59,13 +59,16 @@ export const DashboardScreen: FC<DashboardScreenProps> = (_props) => {
             ))}
           </ScrollView>
 
-          <View style={$themeToggleContainer(theme)}>
-            <Text text={isSidebarOpen ? "Tema Oscuro" : ""} style={$themeToggleText} />
-            <Switch
-              value={theme.isDark}
-              onValueChange={(value) => setThemeContextOverride(value ? "dark" : "light")}
-            />
-          </View>
+          {/* Renderiza el toggle de tema sólo si el sidebar está expandido */}
+          {isSidebarOpen && (
+            <View style={$themeToggleContainer(theme)}>
+              <Text text="Tema Oscuro" style={$themeToggleText} />
+              <Switch
+                value={theme.isDark}
+                onValueChange={(value) => setThemeContextOverride(value ? "dark" : "light")}
+              />
+            </View>
+          )}
 
           <View style={!isSidebarOpen ? $hidden : undefined}>
             <Button

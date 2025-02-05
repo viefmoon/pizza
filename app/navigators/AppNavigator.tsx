@@ -88,7 +88,7 @@ const AppStack = () => {
         name="BLE"
         component={BLEScreen}
         options={{
-          title: "Dispositivos BLE",
+          title: "Dispositivos",
           headerBackTitle: "Volver",
         }}
       />
@@ -96,7 +96,7 @@ const AppStack = () => {
         name="BLEConfig"
         component={BLEConfigScreen}
         options={{
-          title: "Configuración BLE",
+          title: "Configuración de dispositivos",
           headerBackTitle: "Volver",
         }}
       />

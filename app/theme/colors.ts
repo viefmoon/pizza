@@ -33,6 +33,24 @@ const palette = {
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
+
+  green100: "#E6F4EA",
+  green200: "#CEEAD6",
+  green300: "#A8DAB5",
+  green400: "#81C995",
+  green500: "#5BB974",
+
+  blue100: "#DBEAFE",
+  blue200: "#BFDBFE",
+  blue300: "#93C5FD",
+  blue400: "#60A5FA",
+  blue500: "#3B82F6",
+
+  red100: "#fee2e2",
+  red200: "#fecaca",
+  red300: "#fca5a5",
+  red400: "#f87171",
+  red500: "#ef4444",
 } as const
 
 export const colors = {
@@ -65,8 +83,8 @@ export const colors = {
   /**
    * The main tinting color.
    */
-  tint: palette.primary500,
-  tintLight: palette.primary100,
+  tint: palette.green500,
+  tintLight: palette.blue400,
   /**
    * The inactive tinting color.
    */
@@ -78,7 +96,7 @@ export const colors = {
   /**
    * Error messages.
    */
-  error: palette.angry500,
+  error: palette.red500,
   /**
    * Error Background.
    */
