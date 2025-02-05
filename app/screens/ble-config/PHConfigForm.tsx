@@ -12,6 +12,7 @@ import {
 import { spacing } from "@/theme"
 import { Theme } from "@/theme"
 import { useAppTheme } from "@/utils/useAppTheme"
+import { useSnackbar } from "@/context/SnackbarContext"
 
 const NAMESPACE = "ph"
 
@@ -28,6 +29,7 @@ export const PHConfigForm: FC<PHConfigFormProps> = ({ device }) => {
   const [v3, setV3] = useState("")
   const [t3, setT3] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { showMessage } = useSnackbar()
 
   const loadConfig = useCallback(async () => {
     try {
@@ -67,8 +69,10 @@ export const PHConfigForm: FC<PHConfigFormProps> = ({ device }) => {
         },
       }
       await writeConfigCharacteristic(device, BLE_SERVICE_UUID, BLE_CHARACTERISTICS.PH, config)
+      showMessage("Configuración guardada exitosamente.", "success")
     } catch (error) {
       console.error("Error guardando configuración pH:", error)
+      showMessage("Error al guardar la configuración.", "error")
     } finally {
       setIsSubmitting(false)
     }

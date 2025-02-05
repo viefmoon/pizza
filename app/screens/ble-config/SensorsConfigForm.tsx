@@ -11,6 +11,7 @@ import {
 import { spacing, Theme } from "@/theme"
 import { useAppTheme } from "@/utils/useAppTheme"
 import { TouchableOpacity } from "react-native"
+import { useSnackbar } from "@/context/SnackbarContext"
 
 const NAMESPACE = "sensors"
 
@@ -51,6 +52,7 @@ export const SensorsConfigForm: FC<SensorsConfigFormProps> = ({ device }) => {
   >([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [expandedSensor, setExpandedSensor] = useState<string | null>(null)
+  const { showMessage } = useSnackbar()
 
   const loadConfig = useCallback(async () => {
     try {
@@ -120,8 +122,10 @@ export const SensorsConfigForm: FC<SensorsConfigFormProps> = ({ device }) => {
         })),
       }
       await writeConfigCharacteristic(device, BLE_SERVICE_UUID, BLE_CHARACTERISTICS.SENSORS, config)
+      showMessage("Configuración guardada exitosamente.", "success")
     } catch (error) {
       console.error("Error guardando configuración de sensores:", error)
+      showMessage("Error al guardar la configuración.", "error")
     } finally {
       setIsSubmitting(false)
     }
@@ -189,7 +193,7 @@ export const SensorsConfigForm: FC<SensorsConfigFormProps> = ({ device }) => {
                 </View>
 
                 <TextField
-                  label="Timestamp"
+                  label="ID Sensor Temperatura (opcional)"
                   value={sensor.ts}
                   onChangeText={(value) => handleTsChange(index, value)}
                   containerStyle={$field}

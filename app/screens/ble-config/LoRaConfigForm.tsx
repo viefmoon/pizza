@@ -11,6 +11,7 @@ import {
 } from "@/utils/ble-utils"
 import { spacing, Theme } from "@/theme"
 import { useAppTheme } from "@/utils/useAppTheme"
+import { useSnackbar } from "@/context/SnackbarContext"
 
 const NAMESPACE = "lorawan"
 
@@ -35,6 +36,7 @@ export const LoRaConfigForm: FC<LoRaConfigFormProps> = ({ device }) => {
   const [appSKey, setAppSKey] = useState("")
   const [errors, setErrors] = useState<ValidationErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { showMessage } = useSnackbar()
 
   const loadConfig = useCallback(async () => {
     try {
@@ -89,7 +91,10 @@ export const LoRaConfigForm: FC<LoRaConfigFormProps> = ({ device }) => {
   }
 
   const handleSubmit = async () => {
-    if (!validateFields()) return
+    if (!validateFields()) {
+      showMessage("Por favor, corrija los errores antes de guardar.", "error")
+      return
+    }
 
     setIsSubmitting(true)
     try {
@@ -108,8 +113,10 @@ export const LoRaConfigForm: FC<LoRaConfigFormProps> = ({ device }) => {
         BLE_CHARACTERISTICS.LORA_CONFIG,
         config,
       )
+      showMessage("Configuración guardada exitosamente.", "success")
     } catch (error) {
       console.error("Error guardando configuración LoRa:", error)
+      showMessage("Error al guardar la configuración.", "error")
     } finally {
       setIsSubmitting(false)
     }

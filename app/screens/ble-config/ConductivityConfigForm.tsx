@@ -12,6 +12,7 @@ import {
 import { spacing } from "@/theme"
 import { Theme } from "@/theme"
 import { useAppTheme } from "@/utils/useAppTheme"
+import { useSnackbar } from "@/context/SnackbarContext"
 
 const NAMESPACE = "cond"
 
@@ -30,6 +31,7 @@ export const ConductivityConfigForm: FC<ConductivityConfigFormProps> = ({ device
   const [v3, setV3] = useState("")
   const [t3, setT3] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { showMessage } = useSnackbar()
 
   const loadConfig = useCallback(async () => {
     try {
@@ -78,8 +80,10 @@ export const ConductivityConfigForm: FC<ConductivityConfigFormProps> = ({ device
         BLE_CHARACTERISTICS.CONDUCTIVITY,
         config,
       )
+      showMessage("Configuración guardada exitosamente.", "success")
     } catch (error) {
       console.error("Error guardando configuración de conductividad:", error)
+      showMessage("Error al guardar la configuración.", "error")
     } finally {
       setIsSubmitting(false)
     }
