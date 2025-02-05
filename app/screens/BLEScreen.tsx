@@ -12,6 +12,8 @@ import Animated, {
   useSharedValue,
   cancelAnimation,
 } from "react-native-reanimated"
+import { Theme } from "@/theme"
+import { useAppTheme } from "@/utils/useAppTheme"
 
 interface BLEScreenProps extends AppStackScreenProps<"BLE"> {}
 
@@ -26,10 +28,10 @@ export const BLEScreen: FC<BLEScreenProps> = ({ navigation }) => {
     permissionsGranted,
     requestPermissions,
     connectToDevice,
-    disconnectDevice,
-    connectedDevice,
     isConnecting,
   } = useBLE()
+
+  const { theme } = useAppTheme()
 
   // Nueva animación para el botón de escaneo (efecto pulsante)
   const buttonScale = useSharedValue(1)
@@ -67,57 +69,55 @@ export const BLEScreen: FC<BLEScreenProps> = ({ navigation }) => {
 
   if (!isReady) {
     return (
-      <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top", "bottom"]}>
-        <Text preset="heading" text="Inicializando BLE..." style={$title} />
+      <Screen
+        preset="scroll"
+        contentContainerStyle={$container(theme)}
+        safeAreaEdges={["top", "bottom"]}
+      >
+        <Text preset="heading" text="Inicializando BLE..." style={$title(theme)} />
       </Screen>
     )
   }
 
   if (bluetoothState === "PoweredOff") {
     return (
-      <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top", "bottom"]}>
-        <Text preset="heading" text="Bluetooth está desactivado" style={$title} />
-        <Text text="Por favor, active el Bluetooth para continuar" style={$message} />
+      <Screen
+        preset="scroll"
+        contentContainerStyle={$container(theme)}
+        safeAreaEdges={["top", "bottom"]}
+      >
+        <Text preset="heading" text="Bluetooth está desactivado" style={$title(theme)} />
+        <Text text="Por favor, active el Bluetooth para continuar" style={$message(theme)} />
       </Screen>
     )
   }
 
   if (permissionsGranted === false) {
     return (
-      <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top", "bottom"]}>
-        <Text preset="heading" text="Permisos requeridos" style={$title} />
+      <Screen
+        preset="scroll"
+        contentContainerStyle={$container(theme)}
+        safeAreaEdges={["top", "bottom"]}
+      >
+        <Text preset="heading" text="Permisos requeridos" style={$title(theme)} />
         <Text
           text="Esta aplicación necesita permisos de Bluetooth para funcionar"
-          style={$message}
+          style={$message(theme)}
         />
-        <Button text="Solicitar permisos" onPress={requestPermissions} style={$scanButton} />
+        <Button text="Solicitar permisos" onPress={requestPermissions} style={$scanButton(theme)} />
       </Screen>
     )
   }
 
   return (
-    <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top", "bottom"]}>
-      <Text preset="heading" text="Configuración BLE" style={$title} />
-
-      {connectedDevice && (
-        <>
-          <Text text={`Conectado a: ${connectedDevice.name || "Dispositivo"}`} style={$message} />
-          <Button
-            text="Desconectar"
-            onPress={disconnectDevice}
-            style={$disconnectButton}
-            disabled={isConnecting}
-          />
-        </>
-      )}
-
+    <Screen preset="scroll" contentContainerStyle={$container(theme)} safeAreaEdges={["bottom"]}>
       {/* Botón de escaneo con animación pulsante si está activo */}
       <Animated.View style={animatedButtonStyle}>
         <Button
           text={isScanning ? "Detener escaneo" : "Escanear dispositivos"}
           onPress={isScanning ? stopScan : startScan}
-          style={$scanButton}
-          disabled={isConnecting || !!connectedDevice}
+          style={$scanButton(theme)}
+          disabled={isConnecting}
         />
       </Animated.View>
 
@@ -126,39 +126,43 @@ export const BLEScreen: FC<BLEScreenProps> = ({ navigation }) => {
           key={device.id}
           text={`${device.name || "Sin nombre"} (${device.id})`}
           onPress={() => handleDevicePress(device)}
-          style={$deviceButton}
-          disabled={isConnecting || !!connectedDevice}
+          style={$deviceButton(theme)}
+          disabled={isConnecting}
         />
       ))}
     </Screen>
   )
 }
 
-const $container: ViewStyle = {
+const $container = (theme: Theme): ViewStyle => ({
   paddingHorizontal: 16,
   paddingVertical: 24,
-}
+})
 
-const $title: ViewStyle = {
+const $title = (theme: Theme): TextStyle => ({
   marginBottom: 24,
-}
+  color: theme.colors.text,
+})
 
-const $message: TextStyle = {
+const $message = (theme: Theme): TextStyle => ({
   marginBottom: 16,
   textAlign: "center",
-}
+  color: theme.colors.textDim,
+})
 
-const $scanButton: ViewStyle = {
+const $scanButton = (theme: Theme): ViewStyle => ({
+  backgroundColor: theme.colors.tint,
   marginBottom: 16,
-}
+  paddingHorizontal: 24,
+  paddingVertical: 16,
+})
 
-const $deviceButton: ViewStyle = {
-  marginBottom: 8,
-}
-
-const $disconnectButton: ViewStyle = {
+const $deviceButton = (theme: Theme): ViewStyle => ({
   marginBottom: 16,
-  backgroundColor: "#ff4444",
-}
+  backgroundColor: theme.colors.tintLight,
+  borderRadius: 8,
+  paddingHorizontal: 10,
+  paddingVertical: 6,
+})
 
 export default BLEScreen

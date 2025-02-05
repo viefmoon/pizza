@@ -10,13 +10,16 @@ import { ConductivityConfigForm } from "@/screens/ble-config/ConductivityConfigF
 import { PHConfigForm } from "@/screens/ble-config/PHConfigForm"
 import { SensorsConfigForm } from "@/screens/ble-config/SensorsConfigForm"
 import { LoRaConfigForm } from "@/screens/ble-config/LoRaConfigForm"
-import { colors, spacing } from "@/theme"
+import { spacing } from "@/theme"
+import { useAppTheme } from "@/utils/useAppTheme"
+import { Theme } from "@/theme"
 
 interface BLEConfigScreenProps extends AppStackScreenProps<"BLEConfig"> {}
 
 export const BLEConfigScreen: FC<BLEConfigScreenProps> = ({ route, navigation }) => {
   const device = route.params?.device as Device
   const [isDisconnecting, setIsDisconnecting] = useState(false)
+  const { theme } = useAppTheme()
 
   useEffect(() => {
     if (!device) {
@@ -49,14 +52,13 @@ export const BLEConfigScreen: FC<BLEConfigScreenProps> = ({ route, navigation })
   if (!device) return null
 
   return (
-    <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top", "bottom"]}>
-      <Text preset="heading" text="Configuración BLE" style={$title} />
-      <Text text={`Dispositivo: ${device.name || device.id}`} style={$deviceName} />
+    <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["bottom"]}>
+      <Text text={`Dispositivo: ${device.name || device.id}`} style={$deviceName(theme)} />
 
       <Button
         text={isDisconnecting ? "Desconectando..." : "Desconectar dispositivo"}
         onPress={handleDisconnect}
-        style={$disconnectButton}
+        style={{ ...$disconnectButton, backgroundColor: theme.colors.error }}
         disabled={isDisconnecting}
       />
 
@@ -78,21 +80,16 @@ const $container: ViewStyle = {
   paddingVertical: spacing.xl,
 }
 
-const $title: TextStyle = {
-  marginBottom: spacing.lg,
-  textAlign: "center",
-}
-
 const $disconnectButton: ViewStyle = {
   marginBottom: spacing.lg,
-  backgroundColor: colors.error,
 }
 
 const $scrollView: ViewStyle = {
   flex: 1,
 }
 
-const $deviceName: TextStyle = {
+const $deviceName = (theme: Theme): TextStyle => ({
   marginBottom: spacing.sm,
   textAlign: "center",
-}
+  color: theme.colors.text,
+})

@@ -10,6 +10,8 @@ import {
   writeConfigCharacteristic,
 } from "@/utils/ble-utils"
 import { spacing } from "@/theme"
+import { Theme } from "@/theme"
+import { useAppTheme } from "@/utils/useAppTheme"
 
 const NAMESPACE = "ph"
 
@@ -18,6 +20,7 @@ interface PHConfigFormProps {
 }
 
 export const PHConfigForm: FC<PHConfigFormProps> = ({ device }) => {
+  const { theme } = useAppTheme()
   const [v1, setV1] = useState("")
   const [t1, setT1] = useState("")
   const [v2, setV2] = useState("")
@@ -72,7 +75,12 @@ export const PHConfigForm: FC<PHConfigFormProps> = ({ device }) => {
   }
 
   return (
-    <ConfigForm title="Configuración pH" onSubmit={handleSubmit} isSubmitting={isSubmitting}>
+    <ConfigForm
+      title="Configuración pH"
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      style={$form(theme)}
+    >
       <View style={$row}>
         <TextField
           label="Voltaje 1"
@@ -137,3 +145,7 @@ const $field: ViewStyle = {
   flex: 1,
   marginHorizontal: spacing.xs,
 }
+
+const $form = (theme: Theme): ViewStyle => ({
+  backgroundColor: theme.colors.background,
+})

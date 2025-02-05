@@ -9,7 +9,8 @@ import {
   readConfigCharacteristic,
   writeConfigCharacteristic,
 } from "@/utils/ble-utils"
-import { colors, spacing } from "@/theme"
+import { spacing, Theme } from "@/theme"
+import { useAppTheme } from "@/utils/useAppTheme"
 
 const NAMESPACE = "lorawan"
 
@@ -26,6 +27,7 @@ interface LoRaConfigFormProps {
 }
 
 export const LoRaConfigForm: FC<LoRaConfigFormProps> = ({ device }) => {
+  const { theme } = useAppTheme()
   const [devAddr, setDevAddr] = useState("")
   const [fNwkSIntKey, setFNwkSIntKey] = useState("")
   const [sNwkSIntKey, setSNwkSIntKey] = useState("")
@@ -124,7 +126,7 @@ export const LoRaConfigForm: FC<LoRaConfigFormProps> = ({ device }) => {
           autoCapitalize="characters"
           containerStyle={$field}
         />
-        {errors.devAddr && <Text text={errors.devAddr} style={$errorText} />}
+        {errors.devAddr && <Text text={errors.devAddr} style={$errorText(theme)} />}
       </View>
 
       <View style={$fieldContainer}>
@@ -136,7 +138,7 @@ export const LoRaConfigForm: FC<LoRaConfigFormProps> = ({ device }) => {
           autoCapitalize="characters"
           containerStyle={$field}
         />
-        {errors.fNwkSIntKey && <Text text={errors.fNwkSIntKey} style={$errorText} />}
+        {errors.fNwkSIntKey && <Text text={errors.fNwkSIntKey} style={$errorText(theme)} />}
       </View>
 
       <View style={$fieldContainer}>
@@ -148,7 +150,7 @@ export const LoRaConfigForm: FC<LoRaConfigFormProps> = ({ device }) => {
           autoCapitalize="characters"
           containerStyle={$field}
         />
-        {errors.sNwkSIntKey && <Text text={errors.sNwkSIntKey} style={$errorText} />}
+        {errors.sNwkSIntKey && <Text text={errors.sNwkSIntKey} style={$errorText(theme)} />}
       </View>
 
       <View style={$fieldContainer}>
@@ -160,7 +162,7 @@ export const LoRaConfigForm: FC<LoRaConfigFormProps> = ({ device }) => {
           autoCapitalize="characters"
           containerStyle={$field}
         />
-        {errors.nwkSEncKey && <Text text={errors.nwkSEncKey} style={$errorText} />}
+        {errors.nwkSEncKey && <Text text={errors.nwkSEncKey} style={$errorText(theme)} />}
       </View>
 
       <View style={$fieldContainer}>
@@ -172,7 +174,7 @@ export const LoRaConfigForm: FC<LoRaConfigFormProps> = ({ device }) => {
           autoCapitalize="characters"
           containerStyle={$field}
         />
-        {errors.appSKey && <Text text={errors.appSKey} style={$errorText} />}
+        {errors.appSKey && <Text text={errors.appSKey} style={$errorText(theme)} />}
       </View>
     </ConfigForm>
   )
@@ -186,7 +188,7 @@ const $field: ViewStyle = {
   marginBottom: spacing.xs,
 }
 
-const $errorText: TextStyle = {
-  color: colors.error,
+const $errorText = (theme: Theme): TextStyle => ({
+  color: theme.colors.error,
   fontSize: 12,
-}
+})

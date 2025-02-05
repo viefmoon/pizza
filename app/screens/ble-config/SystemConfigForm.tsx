@@ -10,6 +10,8 @@ import {
   writeConfigCharacteristic,
 } from "@/utils/ble-utils"
 import { spacing } from "@/theme"
+import { Theme } from "@/theme"
+import { useAppTheme } from "@/utils/useAppTheme"
 
 const NAMESPACE = "system"
 
@@ -18,6 +20,7 @@ interface SystemConfigFormProps {
 }
 
 export const SystemConfigForm: FC<SystemConfigFormProps> = ({ device }) => {
+  const { theme } = useAppTheme()
   const [initialized, setInitialized] = useState(false)
   const [sleepTime, setSleepTime] = useState("")
   const [deviceId, setDeviceId] = useState("")
@@ -70,6 +73,7 @@ export const SystemConfigForm: FC<SystemConfigFormProps> = ({ device }) => {
       title="Configuración del Sistema"
       onSubmit={handleSubmit}
       isSubmitting={isSubmitting}
+      style={$form(theme)}
     >
       <View style={$fieldContainer}>
         <Text text="Inicializado" />
@@ -100,6 +104,10 @@ export const SystemConfigForm: FC<SystemConfigFormProps> = ({ device }) => {
     </ConfigForm>
   )
 }
+
+const $form = (theme: Theme): ViewStyle => ({
+  backgroundColor: theme.colors.background,
+})
 
 const $fieldContainer: ViewStyle = {
   marginBottom: spacing.md,

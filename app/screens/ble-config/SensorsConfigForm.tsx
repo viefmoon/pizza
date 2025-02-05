@@ -11,6 +11,8 @@ import {
   writeConfigCharacteristic,
 } from "@/utils/ble-utils"
 import { spacing } from "@/theme"
+import { Theme } from "@/theme"
+import { useAppTheme } from "@/utils/useAppTheme"
 
 const NAMESPACE = "sensors"
 
@@ -19,6 +21,7 @@ interface SensorsConfigFormProps {
 }
 
 export const SensorsConfigForm: FC<SensorsConfigFormProps> = ({ device }) => {
+  const { theme } = useAppTheme()
   const [sensorId, setSensorId] = useState("")
   const [sensorType, setSensorType] = useState("")
   const [sensorEnable, setSensorEnable] = useState(false)
@@ -72,6 +75,7 @@ export const SensorsConfigForm: FC<SensorsConfigFormProps> = ({ device }) => {
       title="Configuración de Sensores"
       onSubmit={handleSubmit}
       isSubmitting={isSubmitting}
+      style={$form(theme)}
     >
       <TextField
         label="ID del sensor"
@@ -123,3 +127,7 @@ const $switchField: ViewStyle = {
   flex: 1,
   marginRight: spacing.sm,
 }
+
+const $form = (theme: Theme): ViewStyle => ({
+  backgroundColor: theme.colors.background,
+})

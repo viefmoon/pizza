@@ -58,7 +58,14 @@ const AppStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: colors.background,
+        },
+        headerTintColor: colors.text,
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
         navigationBarColor: colors.background,
         contentStyle: {
           backgroundColor: colors.background,
@@ -66,11 +73,33 @@ const AppStack = () => {
       }}
       initialRouteName="Login"
     >
-      <Stack.Screen name="Login" component={Screens.LoginScreen} />
-      <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
-      <Stack.Screen name="Dashboard" component={Screens.DashboardScreen} />
-      <Stack.Screen name="BLE" component={BLEScreen} />
-      <Stack.Screen name="BLEConfig" component={BLEConfigScreen} />
+      <Stack.Screen name="Login" component={Screens.LoginScreen} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="Welcome"
+        component={Screens.WelcomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Dashboard"
+        component={Screens.DashboardScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BLE"
+        component={BLEScreen}
+        options={{
+          title: "Dispositivos BLE",
+          headerBackTitle: "Volver",
+        }}
+      />
+      <Stack.Screen
+        name="BLEConfig"
+        component={BLEConfigScreen}
+        options={{
+          title: "Configuración BLE",
+          headerBackTitle: "Volver",
+        }}
+      />
       {/** 🔥 Your screens go here */}
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>

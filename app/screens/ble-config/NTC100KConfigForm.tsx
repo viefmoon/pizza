@@ -10,6 +10,8 @@ import {
   writeConfigCharacteristic,
 } from "@/utils/ble-utils"
 import { spacing } from "@/theme"
+import { Theme } from "@/theme"
+import { useAppTheme } from "@/utils/useAppTheme"
 
 const NAMESPACE = "ntc_100k"
 
@@ -18,6 +20,7 @@ interface NTC100KConfigFormProps {
 }
 
 export const NTC100KConfigForm: FC<NTC100KConfigFormProps> = ({ device }) => {
+  const { theme } = useAppTheme()
   const [t1, setT1] = useState("")
   const [r1, setR1] = useState("")
   const [t2, setT2] = useState("")
@@ -72,7 +75,12 @@ export const NTC100KConfigForm: FC<NTC100KConfigFormProps> = ({ device }) => {
   }
 
   return (
-    <ConfigForm title="Configuración NTC 100K" onSubmit={handleSubmit} isSubmitting={isSubmitting}>
+    <ConfigForm
+      title="Configuración NTC 100K"
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      style={$form(theme)}
+    >
       <View style={$row}>
         <TextField
           label="T1 (°C)"
@@ -137,3 +145,7 @@ const $field: ViewStyle = {
   flex: 1,
   marginHorizontal: spacing.xs,
 }
+
+const $form = (theme: Theme): ViewStyle => ({
+  backgroundColor: theme.colors.background,
+})

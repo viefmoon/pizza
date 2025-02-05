@@ -10,6 +10,8 @@ import {
   writeConfigCharacteristic,
 } from "@/utils/ble-utils"
 import { spacing } from "@/theme"
+import { Theme } from "@/theme"
+import { useAppTheme } from "@/utils/useAppTheme"
 
 const NAMESPACE = "cond"
 
@@ -18,6 +20,7 @@ interface ConductivityConfigFormProps {
 }
 
 export const ConductivityConfigForm: FC<ConductivityConfigFormProps> = ({ device }) => {
+  const { theme } = useAppTheme()
   const [calTemp, setCalTemp] = useState("")
   const [coefComp, setCoefComp] = useState("")
   const [v1, setV1] = useState("")
@@ -88,72 +91,74 @@ export const ConductivityConfigForm: FC<ConductivityConfigFormProps> = ({ device
       onSubmit={handleSubmit}
       isSubmitting={isSubmitting}
     >
-      <View style={$row}>
-        <TextField
-          label="Temp. calibración (°C)"
-          value={calTemp}
-          onChangeText={setCalTemp}
-          keyboardType="numeric"
-          containerStyle={$field}
-        />
-        <TextField
-          label="Coef. Compensación"
-          value={coefComp}
-          onChangeText={setCoefComp}
-          keyboardType="numeric"
-          containerStyle={$field}
-        />
-      </View>
+      <View style={$form(theme)}>
+        <View style={$row}>
+          <TextField
+            label="Temp. calibración (°C)"
+            value={calTemp}
+            onChangeText={setCalTemp}
+            keyboardType="numeric"
+            containerStyle={$field}
+          />
+          <TextField
+            label="Coef. Compensación"
+            value={coefComp}
+            onChangeText={setCoefComp}
+            keyboardType="numeric"
+            containerStyle={$field}
+          />
+        </View>
 
-      <View style={$row}>
-        <TextField
-          label="Voltaje 1"
-          value={v1}
-          onChangeText={setV1}
-          keyboardType="numeric"
-          containerStyle={$field}
-        />
-        <TextField
-          label="T1"
-          value={t1}
-          onChangeText={setT1}
-          keyboardType="numeric"
-          containerStyle={$field}
-        />
-      </View>
+        <View style={$row}>
+          <TextField
+            label="Voltaje 1"
+            value={v1}
+            onChangeText={setV1}
+            keyboardType="numeric"
+            containerStyle={$field}
+          />
+          <TextField
+            label="T1"
+            value={t1}
+            onChangeText={setT1}
+            keyboardType="numeric"
+            containerStyle={$field}
+          />
+        </View>
 
-      <View style={$row}>
-        <TextField
-          label="Voltaje 2"
-          value={v2}
-          onChangeText={setV2}
-          keyboardType="numeric"
-          containerStyle={$field}
-        />
-        <TextField
-          label="T2"
-          value={t2}
-          onChangeText={setT2}
-          keyboardType="numeric"
-          containerStyle={$field}
-        />
-      </View>
+        <View style={$row}>
+          <TextField
+            label="Voltaje 2"
+            value={v2}
+            onChangeText={setV2}
+            keyboardType="numeric"
+            containerStyle={$field}
+          />
+          <TextField
+            label="T2"
+            value={t2}
+            onChangeText={setT2}
+            keyboardType="numeric"
+            containerStyle={$field}
+          />
+        </View>
 
-      <View style={$row}>
-        <TextField
-          label="Voltaje 3"
-          value={v3}
-          onChangeText={setV3}
-          keyboardType="numeric"
-          containerStyle={$field}
-        />
-        <TextField
-          label="T3"
-          value={t3}
-          onChangeText={setT3}
-          keyboardType="numeric"
-          containerStyle={$field}
-        />
+        <View style={$row}>
+          <TextField
+            label="Voltaje 3"
+            value={v3}
+            onChangeText={setV3}
+            keyboardType="numeric"
+            containerStyle={$field}
+          />
+          <TextField
+            label="T3"
+            value={t3}
+            onChangeText={setT3}
+            keyboardType="numeric"
+            containerStyle={$field}
+          />
+        </View>
       </View>
     </ConfigForm>
   )
@@ -169,3 +174,7 @@ const $field: ViewStyle = {
   flex: 1,
   marginHorizontal: spacing.xs,
 }
+
+const $form = (theme: Theme): ViewStyle => ({
+  backgroundColor: theme.colors.background,
+})

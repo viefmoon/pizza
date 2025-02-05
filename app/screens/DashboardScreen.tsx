@@ -1,13 +1,14 @@
 import { FC, useState } from "react"
-import { ViewStyle, View, ScrollView, ImageStyle, TextStyle } from "react-native"
+import { ViewStyle, View, ScrollView, TextStyle } from "react-native"
 import { AppStackScreenProps } from "@/navigators"
 import { Button, Screen, Text, ListItem, Card } from "@/components"
 import { Switch } from "@/components/Toggle"
-import { colors, spacing } from "@/theme"
+import { spacing } from "@/theme"
 import { supabase } from "@/services/supabase"
 import { Icon } from "@/components"
 import { IconTypes } from "@/components/Icon"
 import { useAppTheme } from "@/utils/useAppTheme"
+import { Theme } from "@/theme"
 
 interface DashboardScreenProps extends AppStackScreenProps<"Dashboard"> {}
 
@@ -26,7 +27,6 @@ export const DashboardScreen: FC<DashboardScreenProps> = (_props) => {
   }
 
   const menuItems: Array<{ icon: IconTypes; label: string; onPress: () => void }> = [
-    { icon: "bell", label: "Notificaciones", onPress: () => console.log("Notificaciones") },
     {
       icon: "settings",
       label: "Configuración BLE",
@@ -42,8 +42,8 @@ export const DashboardScreen: FC<DashboardScreenProps> = (_props) => {
     >
       <View style={$container}>
         {/* Sidebar */}
-        <View style={[$sidebar, !isSidebarOpen && $sidebarClosed]}>
-          <View style={$sidebarHeader}>
+        <View style={isSidebarOpen ? $sidebar(theme) : { ...$sidebar(theme), ...$sidebarClosed }}>
+          <View style={$sidebarHeader(theme)}>
             <Icon icon="menu" size={24} onPress={() => setIsSidebarOpen(!isSidebarOpen)} />
           </View>
 
@@ -54,12 +54,12 @@ export const DashboardScreen: FC<DashboardScreenProps> = (_props) => {
                 leftIcon={item.icon}
                 text={isSidebarOpen ? item.label : ""}
                 onPress={item.onPress}
-                style={$menuItem}
+                style={$menuItem(theme)}
               />
             ))}
           </ScrollView>
 
-          <View style={[$themeToggleContainer, !isSidebarOpen && $hidden]}>
+          <View style={$themeToggleContainer(theme)}>
             <Text text={isSidebarOpen ? "Tema Oscuro" : ""} style={$themeToggleText} />
             <Switch
               value={theme.isDark}
@@ -67,27 +67,24 @@ export const DashboardScreen: FC<DashboardScreenProps> = (_props) => {
             />
           </View>
 
-          <View style={!isSidebarOpen && $hidden}>
+          <View style={!isSidebarOpen ? $hidden : undefined}>
             <Button
               preset="reversed"
               text={isSidebarOpen ? "Cerrar Sesión" : ""}
-              LeftAccessory={() => (
-                <Icon icon="x" size={20} color={colors.palette.neutral100} style={$logoutIcon} />
-              )}
-              style={$logoutButton}
+              style={{ ...$logoutButton, backgroundColor: theme.colors.error }}
               onPress={handleLogout}
             />
           </View>
         </View>
 
         {/* Main Content */}
-        <View style={$content}>
+        <View style={$content(theme)}>
           <View style={$headerContent}>
             <Text preset="heading" text="Bienvenido al Dashboard" />
             <Text
               preset="subheading"
               text="Selecciona una opción del menú para comenzar"
-              style={$subtitle}
+              style={$subtitle(theme)}
             />
           </View>
           <View style={$mainContent}>
@@ -114,64 +111,59 @@ const $container: ViewStyle = {
   flexDirection: "row",
 }
 
-const $sidebar: ViewStyle = {
+const $sidebar = (theme: Theme): ViewStyle => ({
   width: 250,
-  backgroundColor: colors.palette.neutral300,
+  backgroundColor: theme.colors.background,
   height: "100%",
   padding: spacing.sm,
   justifyContent: "space-between",
   borderRightWidth: 1,
-  borderRightColor: colors.separator,
-}
+  borderRightColor: theme.colors.border,
+})
 
 const $sidebarClosed: ViewStyle = {
   width: 60,
 }
 
-const $sidebarHeader: ViewStyle = {
+const $sidebarHeader = (theme: Theme): ViewStyle => ({
   flexDirection: "row",
   alignItems: "center",
   paddingVertical: spacing.md,
   marginBottom: spacing.sm,
   borderBottomWidth: 1,
-  borderBottomColor: colors.separator,
-}
+  borderBottomColor: theme.colors.border,
+})
 
 const $menuContainer: ViewStyle = {
   flex: 1,
 }
 
-const $menuItem: ViewStyle = {
+const $menuItem = (theme: Theme): ViewStyle => ({
   backgroundColor: "transparent",
   borderBottomWidth: 1,
-  borderBottomColor: colors.separator,
+  borderBottomColor: theme.colors.border,
   paddingVertical: spacing.xs,
   marginVertical: spacing.xxs,
-}
+})
 
-const $content: ViewStyle = {
+const $content = (theme: Theme): ViewStyle => ({
   flex: 1,
   padding: spacing.lg,
-  backgroundColor: colors.background,
-}
+  backgroundColor: theme.colors.background,
+})
 
 const $logoutButton: ViewStyle = {
   marginTop: spacing.md,
-  backgroundColor: colors.error,
-}
-
-const $logoutIcon: ImageStyle = {
-  marginRight: spacing.xs,
 }
 
 const $headerContent: ViewStyle = {
   marginBottom: spacing.xl,
 }
 
-const $subtitle: TextStyle = {
+const $subtitle = (theme: Theme): TextStyle => ({
   marginTop: spacing.sm,
-  color: colors.textDim,
-}
+  color: theme.colors.textDim,
+})
 
 const $mainContent: ViewStyle = {
   flex: 1,
@@ -181,15 +173,15 @@ const $card: ViewStyle = {
   marginBottom: spacing.lg,
 }
 
-const $themeToggleContainer: ViewStyle = {
+const $themeToggleContainer = (theme: Theme): ViewStyle => ({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
   marginVertical: spacing.sm,
   paddingVertical: spacing.xs,
   borderTopWidth: 1,
-  borderTopColor: colors.separator,
-}
+  borderTopColor: theme.colors.border,
+})
 
 const $themeToggleText: TextStyle = {
   marginRight: spacing.sm,

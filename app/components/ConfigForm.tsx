@@ -6,13 +6,20 @@ import { colors, spacing } from "@/theme"
 export interface ConfigFormProps {
   title: string
   children: React.ReactNode
-  onSubmit: () => Promise<void>
+  onSubmit: () => void
   isSubmitting: boolean
+  style?: ViewStyle
 }
 
-export const ConfigForm: FC<ConfigFormProps> = ({ title, children, onSubmit, isSubmitting }) => {
+export const ConfigForm: FC<ConfigFormProps> = ({
+  title,
+  children,
+  onSubmit,
+  isSubmitting,
+  style,
+}) => {
   return (
-    <View style={$container}>
+    <View style={[style, $container]}>
       <Text preset="heading" text={title} style={$title} />
       <View style={$content}>{children}</View>
       <Button
